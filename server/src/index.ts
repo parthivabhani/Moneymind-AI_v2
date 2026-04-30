@@ -43,6 +43,6 @@ app.get('/health', (req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📊 Financial Analysis API ready`);
 });
