@@ -1,4 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const isProduction = import.meta.env.PROD;
+const API_BASE_URL = isProduction 
+  ? 'https://moneymind-ai-production.up.railway.app/api'
+  : 'http://localhost:3001/api';
 
 export interface ApiResponse<T = any> {
   success: boolean;
