@@ -1,0 +1,90 @@
+date,description,amount,category
+2026-01-01,Opening Balance,50000,Income
+2026-01-02,Grocery Store,-1250,Food
+2026-01-02,Uber Ride,-220,Transport
+2026-01-03,Salary Credit,45000,Income
+2026-01-04,Coffee Shop,-180,Food
+2026-01-05,Electricity Bill,-3200,Utilities
+2026-01-06,Netflix Subscription,-649,Entertainment
+2026-01-07,Petrol,-1500,Transport
+2026-01-08,Restaurant Dinner,-2100,Food
+2026-01-09,Amazon Shopping,-3400,Shopping
+2026-01-10,Freelance Payment,8000,Income
+2026-01-11,Mobile Recharge,-399,Utilities
+2026-01-12,Swiggy Order,-650,Food
+2026-01-13,Movie Tickets,-750,Entertainment
+2026-01-14,Pharmacy,-900,Health
+2026-01-15,Internet Bill,-999,Utilities
+2026-01-16,Gym Membership,-2000,Health
+2026-01-17,Groceries,-1350,Food
+2026-01-18,OLA Ride,-300,Transport
+2026-01-19,Clothing Purchase,-4200,Shopping
+2026-01-20,Dividend Credit,1200,Income
+2026-01-21,Restaurant Lunch,-850,Food
+2026-01-22,Electricity Bill,-3100,Utilities
+2026-01-23,Petrol,-1700,Transport
+2026-01-24,Book Purchase,-1200,Education
+2026-01-25,Swiggy Order,-720,Food
+2026-01-26,OTT Subscription,-499,Entertainment
+2026-01-27,Uber Ride,-250,Transport
+2026-01-28,Groceries,-1400,Food
+2026-01-29,Freelance Payment,6000,Income
+2026-01-30,Doctor Visit,-1500,Health
+2026-02-01,Salary Credit,45000,Income
+2026-02-02,Grocery Store,-1300,Food
+2026-02-03,Uber Ride,-200,Transport
+2026-02-04,Restaurant Dinner,-2300,Food
+2026-02-05,Amazon Shopping,-2800,Shopping
+2026-02-06,Electricity Bill,-3300,Utilities
+2026-02-07,Petrol,-1600,Transport
+2026-02-08,Netflix Subscription,-649,Entertainment
+2026-02-09,Freelance Payment,7000,Income
+2026-02-10,Mobile Recharge,-399,Utilities
+2026-02-11,Swiggy Order,-580,Food
+2026-02-12,Movie Tickets,-900,Entertainment
+2026-02-13,Pharmacy,-1100,Health
+2026-02-14,Valentine Dinner,-3500,Food
+2026-02-15,Internet Bill,-999,Utilities
+2026-02-16,Gym Membership,-2000,Health
+2026-02-17,Groceries,-1500,Food
+2026-02-18,OLA Ride,-320,Transport
+2026-02-19,Clothing Purchase,-3800,Shopping
+2026-02-20,Dividend Credit,1500,Income
+2026-02-21,Restaurant Lunch,-950,Food
+2026-02-22,Electricity Bill,-3000,Utilities
+2026-02-23,Petrol,-1750,Transport
+2026-02-24,Online Course,-2500,Education
+2026-02-25,Swiggy Order,-700,Food
+2026-02-26,OTT Subscription,-499,Entertainment
+2026-02-27,Uber Ride,-260,Transport
+2026-02-28,Groceries,-1450,Food
+2026-03-01,Salary Credit,45000,Income
+2026-03-02,Grocery Store,-1200,Food
+2026-03-03,Uber Ride,-210,Transport
+2026-03-04,Restaurant Dinner,-2000,Food
+2026-03-05,Amazon Shopping,-3100,Shopping
+2026-03-06,Electricity Bill,-3400,Utilities
+2026-03-07,Petrol,-1550,Transport
+2026-03-08,Netflix Subscription,-649,Entertainment
+2026-03-09,Freelance Payment,9000,Income
+2026-03-10,Mobile Recharge,-399,Utilities
+2026-03-11,Swiggy Order,-620,Food
+2026-03-12,Movie Tickets,-800,Entertainment
+2026-03-13,Pharmacy,-950,Health
+2026-03-14,Weekend Trip,-6000,Travel
+2026-03-15,Internet Bill,-999,Utilities
+2026-03-16,Gym Membership,-2000,Health
+2026-03-17,Groceries,-1350,Food
+2026-03-18,OLA Ride,-280,Transport
+2026-03-19,Clothing Purchase,-4500,Shopping
+2026-03-20,Dividend Credit,1300,Income
+2026-03-21,Restaurant Lunch,-900,Food
+2026-03-22,Electricity Bill,-3200,Utilities
+2026-03-23,Petrol,-1650,Transport
+2026-03-24,Book Purchase,-1000,Education
+2026-03-25,Swiggy Order,-680,Food
+2026-03-26,OTT Subscription,-499,Entertainment
+2026-03-27,Uber Ride,-240,Transport
+2026-03-28,Groceries,-1500,Food
+2026-03-29,Freelance Payment,7500,Income
+2026-03-30,Doctor Visit,-1400,Health

@@ -1,0 +1,16 @@
+date,description,amount,category
+2026-03-01,Salary Credit,45000,Income
+2026-03-02,Grocery Store,-1200,Food
+2026-03-03,Uber Ride,-220,Transport
+2026-03-04,Restaurant Dinner,-1800,Food
+2026-03-05,Electricity Bill,-3200,Utilities
+2026-03-06,Netflix Subscription,-649,Entertainment
+2026-03-07,Petrol,-1500,Transport
+2026-03-08,Amazon Shopping,-2500,Shopping
+2026-03-09,Freelance Payment,7000,Income
+2026-03-10,Swiggy Order,-650,Food
+2026-03-11,Movie Tickets,-800,Entertainment
+2026-03-12,Internet Bill,-999,Utilities
+2026-03-13,Gym Membership,-2000,Health
+2026-03-14,Groceries,-1400,Food
+2026-03-15,Dividend Credit,1200,Income
