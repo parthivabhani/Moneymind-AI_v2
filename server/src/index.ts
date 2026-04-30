@@ -17,7 +17,11 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:8081'],
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:8081',
+    process.env.FRONTEND_URL || ''
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(morgan('combined'));
