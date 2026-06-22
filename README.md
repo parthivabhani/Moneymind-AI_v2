@@ -1,6 +1,6 @@
 
-About 
-moneymind-ai-azure.vercel.app <href> https://moneymind-ai-azure.vercel.app </href>
+## About 
+You can take the demo for moneymind-ai-azure.vercel.app at <href> https://moneymind-ai-azure.vercel.app </href>
 
 **An Integrated Machine Learning and LLM Framework for Personalized Financial Decision Support**
 
@@ -16,7 +16,7 @@ MoneyMind-FDSS integrates five tightly coupled modules:
 
 The system achieves a forecasting MAPE of 11.2 ± 1.5 % (RF), a risk classification accuracy of 88.0 % with a Cohen’s κ of 0.82, and expert‑rated recommendation quality of 4.19 ± 0.31 out of 5.0.
 
-LLM API Key Setup
+## LLM API Key Setup
 
 The recommendation engine supports both Google Gemini and OpenAI GPT‑4o. To use either, obtain an API key and set it as an environment variable.
 
