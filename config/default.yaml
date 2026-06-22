@@ -1,0 +1,73 @@
+# Default configuration for MoneyMind-FDSS
+# Author: Amit Pimpalkar, RBU, Nagpur, 2026
+
+data:
+  input_format: "csv"
+  required_columns: ["date", "income", "expense", "category"]
+  date_format: "%Y-%m-%d"
+  missing_threshold: 0.05  # for median imputation if missing > 5%
+
+preprocessing:
+  monthly_aggregation: true
+  min_max_scaling: true
+  outlier_method: "iqr"
+  iqr_multiplier: 1.5
+
+financial_metrics:
+  compute_ncf: true
+  compute_npm: true
+  expense_categories: ["Salaries", "Infrastructure", "Marketing", "Operations", "R&D", "Miscellaneous"]
+
+forecasting:
+  models:
+    - "linear_regression"
+    - "random_forest"
+  random_forest:
+    n_estimators: 100
+    max_depth: 12
+    min_samples_split: 2
+    min_samples_leaf: 1
+    random_state: 42
+  walk_forward:
+    initial_window: 12  # months
+    step_size: 1
+    test_horizon: 3     # months
+    forecast_horizons: [30, 60, 90]  # days
+
+risk:
+  fhs_weights:
+    pm: 0.35
+    cfs: 0.30
+    rg: 0.20
+    ev: 0.15
+  thresholds:
+    healthy: 0.65
+    high_risk: 0.35
+  expense_volatility_threshold: 0.25  # CoV > 25% flagged
+
+llm:
+  provider: "gemini"  # or "openai"
+  model_name: "gemini-pro"
+  temperature: 0.3
+  max_tokens: 1024
+  top_p: 0.9
+  system_prompt: |
+    You are an expert financial analyst who specialises in financial advisory for SMEs.
+    You should provide specific and actionable recommendations based on structured financial information.
+    Answer ONLY in structured recommendations with the four headings:
+    [1] Expense Optimisation, [2] Cash Flow Management, [3] Risk Mitigation, [4] Revenue Enhancement.
+    Every recommendation should:
+    (a) Reference a specific metric from the data provided,
+    (b) Outline a tangible action with a measurable target,
+    (c) Include an implementation timeframe.
+    Avoid commenting on data that is not provided.
+  fallback_enabled: true
+
+evaluation:
+  bootstrap_samples: 1000
+  confidence_level: 0.95
+  diebold_mariano_horizon: 1
+
+logging:
+  level: "INFO"
+  file: "logs/moneymind.log"
