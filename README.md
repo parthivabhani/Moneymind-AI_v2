@@ -2,6 +2,8 @@
 About 
 moneymind-ai-azure.vercel.app <href> https://moneymind-ai-azure.vercel.app </href>
 
+**An Integrated Machine Learning and LLM Framework for Personalized Financial Decision Support**
+
 <div align="center">
 
 
@@ -22,9 +24,23 @@ moneymind-ai-azure.vercel.app <href> https://moneymind-ai-azure.vercel.app </hre
 + ┃          📈 FORECAST CASH FLOW • 💸 ANALYZE SPENDING • ⚠ DETECT RISKS               ┃
 + ┃                                                                                      ┃
 + ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+The framework provides a modular pipeline for automated financial analytics, multi‑horizon forecasting, composite risk scoring, and natural‑language advisory generation powered by large language models. It is designed for small and medium enterprises (SMEs) and individual decision‑makers.
 
+## Table of Contents
 
-
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Installation](#installation)
+- [LLM API Key Setup](#llm-api-key-setup)
+- [Dataset Preparation](#dataset-preparation)
+- [Training Procedure](#training-procedure)
+- [Evaluation Procedure](#evaluation-procedure)
+- [Inference Procedure](#inference-procedure)
+- [Sensitivity Analysis and Ablation](#sensitivity-analysis-and-ablation)
+- [Figure Generation](#figure-generation)
+- [Results](#results)
+- [Citation](#citation)
+- [License](#license)
 
 
 # 💰 AI-Powered Financial Intelligence Platform
