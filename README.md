@@ -205,4 +205,7 @@ clarity-finance-main/
 3. **Frontend**: Add components in `src/components/`
 4. **State Management**: Use React Query hooks in `src/hooks/`
 
+Contributor : 
+Parthiv Abhani 
+Aishi De
 
