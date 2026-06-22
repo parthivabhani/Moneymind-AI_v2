@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Evaluate forecasting models on hold-out data and generate performance plots.
+Evaluate forecasting models on hold-out data and create performance plots.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
@@ -29,7 +29,7 @@ def main(args):
     setup_logging()
     config = load_config(args.config)
 
-    # Load test data (assume preprocessed monthly)
+    # Load test data (preprocessed monthly)
     # For simplicity, we use the entire dataset split by time
     df = load_transactions(args.data_path)
     monthly = preprocess_pipeline(df, **config['preprocessing'])
