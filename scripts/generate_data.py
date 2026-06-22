@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Generate synthetic SME transaction data and risk profiles.
+Create SME transaction data and risk profiles.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
@@ -58,7 +58,7 @@ def generate_transactions(months=24, seed=42):
             })
     
     df = pd.DataFrame(records)
-    # Aggregate to daily, Actually we keep daily records; the pipeline will aggregate monthly.
+    # Aggregate to daily records; the pipeline will aggregate monthly.
     # Ensure we have some income each month; we'll add a fixed income at month start.
     # We'll do a simple approach: for each month, add one income record equal to total monthly income, and distribute expenses.
     # We should have daily expenses and occasional income.
@@ -133,7 +133,7 @@ def generate_risk_profiles(n=150, seed=42):
     np.random.seed(seed)
     profiles = []
     for i in range(n):
-        # Generate random components with correlations to produce three classes
+        # Generate components with correlations to produce three classes
         # We'll create distributions for each class
         if i < 50:  # Healthy
             pm = np.random.uniform(15, 40)
