@@ -4,6 +4,37 @@ moneymind-ai-azure.vercel.app <href> https://moneymind-ai-azure.vercel.app </hre
 
 **An Integrated Machine Learning and LLM Framework for Personalized Financial Decision Support**
 
+## Overview
+
+MoneyMind-FDSS integrates five tightly coupled modules:
+
+1. **Data Ingestion & Preprocessing** – handles missing values, outlier detection, monthly aggregation, and min‑max normalisation.
+2. **Financial Analytics Engine** – computes total income, total expenses, net cash flow (NCF), net profit margin (NPM), and expense category distributions.
+3. **Machine Learning Forecasting** – provides 30‑, 60‑, and 90‑day forecasts using Ordinary Least Squares (OLS) linear regression and Random Forest (RF) ensemble algorithms, validated via walk‑forward cross‑validation.
+4. **Composite Financial Health Scoring (FHS)** – combines NPM, cash flow stability (CFS), revenue growth (RG), and expense volatility (EV) into a three‑tier risk classification (Healthy, Moderate Risk, High Risk).
+5. **LLM‑Based Recommendation Engine** – transforms structured financial summaries into actionable, natural‑language advice using prompt engineering and state‑of‑the‑art language models (Gemini or GPT‑4o).
+
+The system achieves a forecasting MAPE of 11.2 ± 1.5 % (RF), a risk classification accuracy of 88.0 % with a Cohen’s κ of 0.82, and expert‑rated recommendation quality of 4.19 ± 0.31 out of 5.0.
+
+LLM API Key Setup
+
+The recommendation engine supports both Google Gemini and OpenAI GPT‑4o. To use either, obtain an API key and set it as an environment variable.
+
+    Google Gemini:
+    Visit Google AI Studio to generate an API key.
+    Set the environment variable:
+
+export GEMINI_API_KEY="your_gemini_api_key"
+
+OpenAI GPT‑4o:
+Obtain an API key from the OpenAI platform.
+Set the environment variable:
+
+export OPENAI_API_KEY="your_openai_api_key"
+
+# If you do not provide a valid key or the LLM API is unavailable, the system will fall back to rule‑based recommendations (enabled by default in the configuration).
+
+
 <div align="center">
 
 
@@ -26,21 +57,6 @@ moneymind-ai-azure.vercel.app <href> https://moneymind-ai-azure.vercel.app </hre
 + ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 The framework provides a modular pipeline for automated financial analytics, multi‑horizon forecasting, composite risk scoring, and natural‑language advisory generation powered by large language models. It is designed for small and medium enterprises (SMEs) and individual decision‑makers.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Repository Structure](#repository-structure)
-- [Installation](#installation)
-- [LLM API Key Setup](#llm-api-key-setup)
-- [Dataset Preparation](#dataset-preparation)
-- [Training Procedure](#training-procedure)
-- [Evaluation Procedure](#evaluation-procedure)
-- [Inference Procedure](#inference-procedure)
-- [Sensitivity Analysis and Ablation](#sensitivity-analysis-and-ablation)
-- [Figure Generation](#figure-generation)
-- [Results](#results)
-- [Citation](#citation)
-- [License](#license)
 
 
 # 💰 AI-Powered Financial Intelligence Platform
