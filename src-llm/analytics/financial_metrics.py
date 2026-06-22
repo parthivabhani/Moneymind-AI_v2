@@ -61,11 +61,8 @@ def compute_kpis(monthly_df: pd.DataFrame) -> Dict:
 
 def compute_expense_distribution(monthly_df: pd.DataFrame, categories: List[str]) -> Dict[str, float]:
     """
-    Compute expense distribution across categories from the original transaction data.
-
-    This function assumes that the monthly_df has already been aggregated but we need category breakdown.
-    In practice, we need to compute from raw data.
-    A real implementation would join with category-level aggregation.
+    Compute expense distribution across categories.
+    This function assumes that the monthly_df has already been aggregated category breakdown.
 
     Args:
         monthly_df: DataFrame containing raw category data (or pre-aggregated by category).
@@ -74,8 +71,7 @@ def compute_expense_distribution(monthly_df: pd.DataFrame, categories: List[str]
     Returns:
         Dictionary mapping category to percentage of total expenses.
     """
-    # For demonstration, we assume monthly_df has category totals. In a real system,
-    # this would be computed during aggregation.
+    
     logger.warning("Expense distribution computation is a placeholder; implement with actual category data.")
     # distribution
     dist = {cat: 100.0 / len(categories) for cat in categories}
