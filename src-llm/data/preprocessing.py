@@ -68,7 +68,7 @@ def detect_outliers_iqr(df: pd.DataFrame, column: str, multiplier: float = 1.5) 
         lower = q1 - multiplier * iqr
         upper = q3 + multiplier * iqr
 
-    # Flag outliers but do not remove; we'll mark them
+    # Flag outliers and mark them
     outliers = (data < lower) | (data > upper)
     logger.info(f"Detected {outliers.sum()} outliers in {column}.")
     return outliers
