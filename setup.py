@@ -12,7 +12,6 @@ setup(
     version="1.0.0",
     description="Integrated ML and LLM Framework for Personalized Financial Decision Support",
     author="Amit Pimpalkar",
-    author_email="amit.pimpalkar@rbu.ac.in",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
