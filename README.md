@@ -200,8 +200,6 @@ Whether you're an individual managing personal finances or an SME monitoring cas
 └─────────────────────────────────────────────────────────────┘
 ```
 
-(Add actual screenshots later)
-
 ---
 
 # 🚀 Quick Start
