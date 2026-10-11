@@ -15,11 +15,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timezone
 
-import google.generativeai as genai
-
 # ── Configuration ──
-# Use the exact model identifier supported by your Google AI API account.
-GEMINI_MODEL_NAME = "gemini-1.5-flash"  # Replace only with your verified API model ID
+GEMINI_MODEL_NAME = "gemini-1.5-flash"  
 
 RANDOM_SEED = 42
 N_RATERS = 5
@@ -38,23 +35,12 @@ CRITERIA = ["relevance", "specificity", "coherence", "overall"]
 RATINGS_PATH = "data/llm_recommendation_quality_ratings.csv"
 OUTPUT_METADATA_PATH = "outputs/gemini_evaluation_metadata.json"
 OUTPUT_TABLE_PATH = "outputs/table_llm_recommendation_quality.csv"
+OUTPUT_PER_MODEL_TABLE_PATH = "outputs/table_llm_recommendation_quality_by_model.csv"
 
 # ── Reproducibility / traceability ──
 random.seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 os.environ["PYTHONHASHSEED"] = str(RANDOM_SEED)
-
-# ── Configure Gemini client ──
-api_key = os.getenv("GOOGLE_API_KEY")
-if not api_key:
-    raise RuntimeError(
-        "GOOGLE_API_KEY environment variable is not set. "
-        "The evaluation cannot call the Gemini API without credentials."
-    )
-
-genai.configure(api_key=api_key)
-
-model = genai.GenerativeModel(GEMINI_MODEL_NAME)
 
 # ── Load real rater ratings ──
 raw_scores = pd.read_csv(RATINGS_PATH)
@@ -70,6 +56,21 @@ if missing_columns:
         f"Missing required columns in {RATINGS_PATH}: {sorted(missing_columns)}"
     )
 
+# Optional model column
+HAS_MODEL_COLUMN = "model" in raw_scores.columns
+
+if HAS_MODEL_COLUMN:
+    raw_scores["model"] = raw_scores["model"].astype(str).str.strip()
+    if raw_scores["model"].eq("").any() or raw_scores["model"].isna().any():
+        raise ValueError(
+            "The ratings file contains a 'model' column, but some model values are missing or blank."
+        )
+
+    MODELS = sorted(raw_scores["model"].unique())
+else:
+    MODELS = [GEMINI_MODEL_NAME]
+    raw_scores["model"] = GEMINI_MODEL_NAME
+
 # Validate categories
 unexpected_categories = set(raw_scores["category"]) - set(CATEGORIES)
 if unexpected_categories:
@@ -78,15 +79,17 @@ if unexpected_categories:
     )
 
 # Validate completeness
-expected_rows = len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS
+expected_rows = len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS * len(MODELS)
+
 if len(raw_scores) != expected_rows:
     raise ValueError(
-        f"Expected {expected_rows} rating records, but found {len(raw_scores)}."
+        f"Expected {expected_rows} rating records, but found {len(raw_scores)}.\n"
+        f"Models detected: {MODELS}"
     )
 
 rating_counts = (
     raw_scores
-    .groupby(["category", "output_id"])["rater_id"]
+    .groupby(["model", "category", "output_id"])["rater_id"]
     .nunique()
 )
 
@@ -107,7 +110,12 @@ for criterion in CRITERIA:
             f"Invalid {criterion} scores detected; scores must be between 1 and 5."
         )
 
-# ── Compute Table 14 ──
+# ── Helper: format mean ± SD ──
+def format_mean_sd(mean: float, sd: float) -> str:
+    return f"{mean:.2f} ± {sd:.2f}"
+
+
+# ── Compute original Table: category-level results across all models ──
 category_summary = (
     raw_scores
     .groupby("category", sort=False)[CRITERIA]
@@ -122,16 +130,16 @@ for category in CATEGORIES:
     for criterion in CRITERIA:
         mean = category_summary.loc[category, (criterion, "mean")]
         sd = category_summary.loc[category, (criterion, "std")]
-        row[criterion.title()] = f"{mean:.2f} ± {sd:.2f}"
+        row[criterion.title()] = format_mean_sd(mean, sd)
 
     formatted_rows.append(row)
 
 overall_row = {"Category": "Overall Mean"}
 
 for criterion in CRITERIA:
-    overall_row[criterion.title()] = (
-        f"{raw_scores[criterion].mean():.2f} ± "
-        f"{raw_scores[criterion].std(ddof=1):.2f}"
+    overall_row[criterion.title()] = format_mean_sd(
+        raw_scores[criterion].mean(),
+        raw_scores[criterion].std(ddof=1)
     )
 
 table = pd.DataFrame(formatted_rows + [overall_row])
@@ -145,9 +153,60 @@ table = table.rename(
     }
 )
 
+# ── Compute per-model results ──
+per_model_rows = []
+
+for model_name in MODELS:
+    model_scores = raw_scores[raw_scores["model"] == model_name]
+
+    model_category_summary = (
+        model_scores
+        .groupby("category", sort=False)[CRITERIA]
+        .agg(["mean", "std"])
+    )
+
+    for category in CATEGORIES:
+        row = {
+            "Model": model_name,
+            "Category": category
+        }
+
+        for criterion in CRITERIA:
+            mean = model_category_summary.loc[category, (criterion, "mean")]
+            sd = model_category_summary.loc[category, (criterion, "std")]
+            row[criterion.title()] = format_mean_sd(mean, sd)
+
+        per_model_rows.append(row)
+
+    model_overall_row = {
+        "Model": model_name,
+        "Category": "Overall Mean"
+    }
+
+    for criterion in CRITERIA:
+        model_overall_row[criterion.title()] = format_mean_sd(
+            model_scores[criterion].mean(),
+            model_scores[criterion].std(ddof=1)
+        )
+
+    per_model_rows.append(model_overall_row)
+
+per_model_table = pd.DataFrame(per_model_rows)
+
+per_model_table = per_model_table.rename(
+    columns={
+        "Relevance": "Relevance (5)",
+        "Specificity": "Specificity (5)",
+        "Coherence": "Coherence (5)",
+        "Overall": "Overall (5)"
+    }
+)
+
 # ── Save results ──
 os.makedirs(os.path.dirname(OUTPUT_TABLE_PATH), exist_ok=True)
+
 table.to_csv(OUTPUT_TABLE_PATH, index=False)
+per_model_table.to_csv(OUTPUT_PER_MODEL_TABLE_PATH, index=False)
 
 # ── Save factual evaluation metadata ──
 evaluation_metadata = {
@@ -162,17 +221,29 @@ evaluation_metadata = {
     "total_rating_records": int(len(raw_scores)),
     "rating_scale": "1-5",
     "criteria": CRITERIA,
-    "note": (
-        "This metadata describes the human evaluation of previously generated "
-        "Gemini recommendations. It does not claim that this script generated "
-        "the recommendations unless the recommendation-generation workflow is "
-        "executed separately and its outputs are supplied as input."
+    "model_column_present_in_ratings": HAS_MODEL_COLUMN,
+    "models_evaluated": MODELS,
+    "per_model_comparison_possible": HAS_MODEL_COLUMN,
+    "per_model_results_file": (
+        OUTPUT_PER_MODEL_TABLE_PATH if HAS_MODEL_COLUMN else None
     )
 }
 
 with open(OUTPUT_METADATA_PATH, "w") as f:
     json.dump(evaluation_metadata, f, indent=4)
 
+print("Original category-level table:")
 print(table.to_string(index=False))
+
+print("\nPer-model results:")
+if HAS_MODEL_COLUMN:
+    print(per_model_table.to_string(index=False))
+else:
+    print(
+        "The rating dataset does not include a model column, "
+        "so per-model comparison was not possible for the original evaluation."
+    )
+
 print(f"\nSaved table: {OUTPUT_TABLE_PATH}")
+print(f"Saved per-model table: {OUTPUT_PER_MODEL_TABLE_PATH}")
 print(f"Saved metadata: {OUTPUT_METADATA_PATH}")
