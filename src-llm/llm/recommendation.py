@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def generate_recommendations(
     financial_summary: Dict,
     provider: str = "gemini",
-    model_name: str = "gemini-pro",
+    model_name: str = "Gemini 3.8 Flash",
     temperature: float = 0.3,
     max_tokens: int = 1024,
     top_p: float = 0.9,
