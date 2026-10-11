@@ -1,33 +1,3 @@
-import numpy as np
-import pandas as pd
-
-# ── Reproducibility ──
-RANDOM_SEED = 42
-np.random.seed(RANDOM_SEED)
-
-# ── Configuration ──
-N_RATERS = 5
-N_OUTPUTS_PER_CATEGORY = 50
-CATEGORIES = [
-    "Expense Optimization",
-    "Cash Flow Management",
-    "Risk Mitigation",
-    "Revenue Enhancement",
-    "Portfolio Diversification"
-]
-
-CRITERIA = ["Relevance", "Specificity", "Coherence", "Overall"]
-
-# ── Raw scores ──
-# Each row represent one rater's evaluation of one LLM output.
-#
-# Required columns:
-# category, output_id, rater_id,
-# relevance, specificity, coherence, overall
-#
-# Example:
-# ── Load actual LLM recommendation quality ratings ──
-RAW_RATINGS_PATH = "data/llm_recommendation_quality_ratings.csv"
 '''
 category,output_id,rater_id,relevance,specificity,coherence,overall
 Expense Optimization,EXP-001,1,4,4,5,4
@@ -38,26 +8,66 @@ Expense Optimization,EXP-001,5,5,4,5,5
 Cash Flow Management,CFM-001,1,5,4,5,5
 ...
 
+import os
+import json
+import random
+import numpy as np
+import pandas as pd
+from datetime import datetime, timezone
 
-raw_scores = pd.read_csv(RAW_RATINGS_PATH)
+import google.generativeai as genai
 
-# Standardize column names
+# ── Configuration ──
+# Use the exact model identifier supported by your Google AI API account.
+GEMINI_MODEL_NAME = "gemini-1.5-flash"  # Replace only with your verified API model ID
+
+RANDOM_SEED = 42
+N_RATERS = 5
+N_OUTPUTS_PER_CATEGORY = 50
+
+CATEGORIES = [
+    "Expense Optimization",
+    "Cash Flow Management",
+    "Risk Mitigation",
+    "Revenue Enhancement",
+    "Portfolio Diversification"
+]
+
+CRITERIA = ["relevance", "specificity", "coherence", "overall"]
+
+RATINGS_PATH = "data/llm_recommendation_quality_ratings.csv"
+OUTPUT_METADATA_PATH = "outputs/gemini_evaluation_metadata.json"
+OUTPUT_TABLE_PATH = "outputs/table_llm_recommendation_quality.csv"
+
+# ── Reproducibility / traceability ──
+random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+os.environ["PYTHONHASHSEED"] = str(RANDOM_SEED)
+
+# ── Configure Gemini client ──
+api_key = os.getenv("GOOGLE_API_KEY")
+if not api_key:
+    raise RuntimeError(
+        "GOOGLE_API_KEY environment variable is not set. "
+        "The evaluation cannot call the Gemini API without credentials."
+    )
+
+genai.configure(api_key=api_key)
+
+model = genai.GenerativeModel(GEMINI_MODEL_NAME)
+
+# ── Load real rater ratings ──
+raw_scores = pd.read_csv(RATINGS_PATH)
 raw_scores.columns = raw_scores.columns.str.strip().str.lower()
 
 required_columns = [
-    "category",
-    "output_id",
-    "rater_id",
-    "relevance",
-    "specificity",
-    "coherence",
-    "overall"
+    "category", "output_id", "rater_id", *CRITERIA
 ]
 
 missing_columns = set(required_columns) - set(raw_scores.columns)
 if missing_columns:
     raise ValueError(
-        f"Missing required columns in {RAW_RATINGS_PATH}: {sorted(missing_columns)}"
+        f"Missing required columns in {RATINGS_PATH}: {sorted(missing_columns)}"
     )
 
 # Validate categories
@@ -67,15 +77,13 @@ if unexpected_categories:
         f"Unexpected categories found: {sorted(unexpected_categories)}"
     )
 
-# Validate completeness: 5 raters × 50 outputs per category
+# Validate completeness
 expected_rows = len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS
-
 if len(raw_scores) != expected_rows:
     raise ValueError(
         f"Expected {expected_rows} rating records, but found {len(raw_scores)}."
     )
 
-# Check that every output was rated by every rater
 rating_counts = (
     raw_scores
     .groupby(["category", "output_id"])["rater_id"]
@@ -85,72 +93,86 @@ rating_counts = (
 if (rating_counts != N_RATERS).any():
     incomplete = rating_counts[rating_counts != N_RATERS]
     raise ValueError(
-        "Some outputs do not have ratings from all raters:\n"
+        "Some outputs were not rated by all raters:\n"
         f"{incomplete}"
     )
 
-# Validate score ranges
-score_columns = ["relevance", "specificity", "coherence", "overall"]
-
-for col in score_columns:
-    if not raw_scores[col].between(1, 5).all():
-        invalid = raw_scores.loc[~raw_scores[col].between(1, 5), ["category", "output_id", "rater_id", col]]
+# Validate score range
+for criterion in CRITERIA:
+    raw_scores[criterion] = pd.to_numeric(
+        raw_scores[criterion], errors="raise"
+    )
+    if not raw_scores[criterion].between(1, 5).all():
         raise ValueError(
-            f"Invalid {col} scores found (must be between 1 and 5):\n{invalid}"
+            f"Invalid {criterion} scores detected; scores must be between 1 and 5."
         )
 
-# Convert scores to numeric type
-raw_scores[score_columns] = raw_scores[score_columns].apply(
-    pd.to_numeric, errors="raise"
-)
-
-# ── Validation ──
-assert len(raw_scores) == len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS
-assert set(raw_scores["category"]) == set(CATEGORIES)
-
-# ── Compute category-level mean ± SD ──
+# ── Compute Table 14 ──
 category_summary = (
     raw_scores
     .groupby("category", sort=False)[CRITERIA]
     .agg(["mean", "std"])
 )
 
-# Format as "mean ± sd"
 formatted_rows = []
 
 for category in CATEGORIES:
     row = {"Category": category}
+
     for criterion in CRITERIA:
         mean = category_summary.loc[category, (criterion, "mean")]
         sd = category_summary.loc[category, (criterion, "std")]
-        row[criterion] = f"{mean:.2f} ± {sd:.2f}"
+        row[criterion.title()] = f"{mean:.2f} ± {sd:.2f}"
+
     formatted_rows.append(row)
 
-table = pd.DataFrame(formatted_rows)
-
-# ── Compute overall mean ± SD across all categories ──
 overall_row = {"Category": "Overall Mean"}
 
 for criterion in CRITERIA:
-    mean = raw_scores[criterion].mean()
-    sd = raw_scores[criterion].std(ddof=1)
-    overall_row[criterion] = f"{mean:.2f} ± {sd:.2f}"
+    overall_row[criterion.title()] = (
+        f"{raw_scores[criterion].mean():.2f} ± "
+        f"{raw_scores[criterion].std(ddof=1):.2f}"
+    )
 
-table = pd.concat(
-    [table, pd.DataFrame([overall_row])],
-    ignore_index=True
+table = pd.DataFrame(formatted_rows + [overall_row])
+
+table = table.rename(
+    columns={
+        "Relevance": "Relevance (5)",
+        "Specificity": "Specificity (5)",
+        "Coherence": "Coherence (5)",
+        "Overall": "Overall (5)"
+    }
 )
 
-# ── Display ──
-table.columns = [
-    "Category",
-    "Relevance (5)",
-    "Specificity (5)",
-    "Coherence (5)",
-    "Overall (5)"
-]
+# ── Save results ──
+os.makedirs(os.path.dirname(OUTPUT_TABLE_PATH), exist_ok=True)
+table.to_csv(OUTPUT_TABLE_PATH, index=False)
+
+# ── Save factual evaluation metadata ──
+evaluation_metadata = {
+    "model_identifier": GEMINI_MODEL_NAME,
+    "api_provider": "Google Generative AI",
+    "evaluation_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+    "random_seed": RANDOM_SEED,
+    "ratings_source_file": RATINGS_PATH,
+    "number_of_categories": len(CATEGORIES),
+    "outputs_per_category": N_OUTPUTS_PER_CATEGORY,
+    "number_of_raters": N_RATERS,
+    "total_rating_records": int(len(raw_scores)),
+    "rating_scale": "1-5",
+    "criteria": CRITERIA,
+    "note": (
+        "This metadata describes the human evaluation of previously generated "
+        "Gemini recommendations. It does not claim that this script generated "
+        "the recommendations unless the recommendation-generation workflow is "
+        "executed separately and its outputs are supplied as input."
+    )
+}
+
+with open(OUTPUT_METADATA_PATH, "w") as f:
+    json.dump(evaluation_metadata, f, indent=4)
 
 print(table.to_string(index=False))
-
-# ── Save ──
-table.to_csv("table_llm_recommendation_quality.csv", index=False)
+print(f"\nSaved table: {OUTPUT_TABLE_PATH}")
+print(f"Saved metadata: {OUTPUT_METADATA_PATH}")
