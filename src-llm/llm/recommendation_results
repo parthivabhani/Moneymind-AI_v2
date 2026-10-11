@@ -1,3 +1,7 @@
+"""
+Recommendation results evaluation.
+Author: Amit Pimpalkar, RBU, Nagpur, 2026
+"""
 '''
 category,output_id,rater_id,relevance,specificity,coherence,overall
 Expense Optimization,EXP-001,1,4,4,5,4
