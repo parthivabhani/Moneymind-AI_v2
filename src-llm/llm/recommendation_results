@@ -18,29 +18,91 @@ CATEGORIES = [
 
 CRITERIA = ["Relevance", "Specificity", "Coherence", "Overall"]
 
-# ── Example raw scores ──
-# Replace this block with your actual CSV/database records.
-# Each row should represent one rater's evaluation of one LLM output.
+# ── Raw scores ──
+# Each row represent one rater's evaluation of one LLM output.
 #
 # Required columns:
 # category, output_id, rater_id,
 # relevance, specificity, coherence, overall
 #
 # Example:
-raw_scores = pd.DataFrame([
-    {
-        "category": category,
-        "output_id": f"{category[:3].upper()}-{i+1:03d}",
-        "rater_id": r + 1,
-        "relevance": np.random.randint(3, 6),
-        "specificity": np.random.randint(3, 6),
-        "coherence": np.random.randint(4, 6),
-        "overall": np.random.randint(3, 6)
-    }
-    for category in CATEGORIES
-    for i in range(N_OUTPUTS_PER_CATEGORY)
-    for r in range(N_RATERS)
-])
+# ── Load actual LLM recommendation quality ratings ──
+RAW_RATINGS_PATH = "data/llm_recommendation_quality_ratings.csv"
+'''
+category,output_id,rater_id,relevance,specificity,coherence,overall
+Expense Optimization,EXP-001,1,4,4,5,4
+Expense Optimization,EXP-001,2,5,4,5,5
+Expense Optimization,EXP-001,3,4,4,4,4
+Expense Optimization,EXP-001,4,4,4,5,4
+Expense Optimization,EXP-001,5,5,4,5,5
+Cash Flow Management,CFM-001,1,5,4,5,5
+...
+
+
+raw_scores = pd.read_csv(RAW_RATINGS_PATH)
+
+# Standardize column names
+raw_scores.columns = raw_scores.columns.str.strip().str.lower()
+
+required_columns = [
+    "category",
+    "output_id",
+    "rater_id",
+    "relevance",
+    "specificity",
+    "coherence",
+    "overall"
+]
+
+missing_columns = set(required_columns) - set(raw_scores.columns)
+if missing_columns:
+    raise ValueError(
+        f"Missing required columns in {RAW_RATINGS_PATH}: {sorted(missing_columns)}"
+    )
+
+# Validate categories
+unexpected_categories = set(raw_scores["category"]) - set(CATEGORIES)
+if unexpected_categories:
+    raise ValueError(
+        f"Unexpected categories found: {sorted(unexpected_categories)}"
+    )
+
+# Validate completeness: 5 raters × 50 outputs per category
+expected_rows = len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS
+
+if len(raw_scores) != expected_rows:
+    raise ValueError(
+        f"Expected {expected_rows} rating records, but found {len(raw_scores)}."
+    )
+
+# Check that every output was rated by every rater
+rating_counts = (
+    raw_scores
+    .groupby(["category", "output_id"])["rater_id"]
+    .nunique()
+)
+
+if (rating_counts != N_RATERS).any():
+    incomplete = rating_counts[rating_counts != N_RATERS]
+    raise ValueError(
+        "Some outputs do not have ratings from all raters:\n"
+        f"{incomplete}"
+    )
+
+# Validate score ranges
+score_columns = ["relevance", "specificity", "coherence", "overall"]
+
+for col in score_columns:
+    if not raw_scores[col].between(1, 5).all():
+        invalid = raw_scores.loc[~raw_scores[col].between(1, 5), ["category", "output_id", "rater_id", col]]
+        raise ValueError(
+            f"Invalid {col} scores found (must be between 1 and 5):\n{invalid}"
+        )
+
+# Convert scores to numeric type
+raw_scores[score_columns] = raw_scores[score_columns].apply(
+    pd.to_numeric, errors="raise"
+)
 
 # ── Validation ──
 assert len(raw_scores) == len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS
