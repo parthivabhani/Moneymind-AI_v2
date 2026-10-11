@@ -10,6 +10,24 @@ from typing import Dict, List, Optional
 import google.generativeai as genai
 from openai import OpenAI
 
+
+# ── Reproducibility settings ──
+RANDOM_SEED = 42
+
+random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+os.environ["PYTHONHASHSEED"] = str(RANDOM_SEED)
+
+# If using PyTorch-based components
+try:
+    import torch
+    torch.manual_seed(RANDOM_SEED)
+    torch.cuda.manual_seed_all(RANDOM_SEED)
+except ImportError:
+    pass
+
+
+    
 logger = logging.getLogger(__name__)
 
 
@@ -177,4 +195,16 @@ def fallback_recommendations(summary: Dict) -> Dict[str, str]:
         recs["Risk Mitigation"] = "Regularly review financial health metrics to sustain the healthy score."
         recs["Revenue Enhancement"] = "Expand into adjacent markets or increase pricing for premium services."
 
+# ── Evaluation metadata ──
+evaluation_metadata = {
+    "model": "Gemini 3.8 Flash",
+    "evaluation_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+    "random_seed": RANDOM_SEED,
+    "dataset_version": "v1.0",
+    "evaluation_type": "walk-forward cross-validation"
+}
+
+# Save metadata alongside metrics
+with open("gemini_flash_evaluation_metadata.json", "w") as f:
+    json.dump(evaluation_metadata, f, indent=4)
     return recs
