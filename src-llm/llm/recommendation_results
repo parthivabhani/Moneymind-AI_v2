@@ -1,0 +1,94 @@
+import numpy as np
+import pandas as pd
+
+# ── Reproducibility ──
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+
+# ── Configuration ──
+N_RATERS = 5
+N_OUTPUTS_PER_CATEGORY = 50
+CATEGORIES = [
+    "Expense Optimization",
+    "Cash Flow Management",
+    "Risk Mitigation",
+    "Revenue Enhancement",
+    "Portfolio Diversification"
+]
+
+CRITERIA = ["Relevance", "Specificity", "Coherence", "Overall"]
+
+# ── Example raw scores ──
+# Replace this block with your actual CSV/database records.
+# Each row should represent one rater's evaluation of one LLM output.
+#
+# Required columns:
+# category, output_id, rater_id,
+# relevance, specificity, coherence, overall
+#
+# Example:
+raw_scores = pd.DataFrame([
+    {
+        "category": category,
+        "output_id": f"{category[:3].upper()}-{i+1:03d}",
+        "rater_id": r + 1,
+        "relevance": np.random.randint(3, 6),
+        "specificity": np.random.randint(3, 6),
+        "coherence": np.random.randint(4, 6),
+        "overall": np.random.randint(3, 6)
+    }
+    for category in CATEGORIES
+    for i in range(N_OUTPUTS_PER_CATEGORY)
+    for r in range(N_RATERS)
+])
+
+# ── Validation ──
+assert len(raw_scores) == len(CATEGORIES) * N_OUTPUTS_PER_CATEGORY * N_RATERS
+assert set(raw_scores["category"]) == set(CATEGORIES)
+
+# ── Compute category-level mean ± SD ──
+category_summary = (
+    raw_scores
+    .groupby("category", sort=False)[CRITERIA]
+    .agg(["mean", "std"])
+)
+
+# Format as "mean ± sd"
+formatted_rows = []
+
+for category in CATEGORIES:
+    row = {"Category": category}
+    for criterion in CRITERIA:
+        mean = category_summary.loc[category, (criterion, "mean")]
+        sd = category_summary.loc[category, (criterion, "std")]
+        row[criterion] = f"{mean:.2f} ± {sd:.2f}"
+    formatted_rows.append(row)
+
+table = pd.DataFrame(formatted_rows)
+
+# ── Compute overall mean ± SD across all categories ──
+overall_row = {"Category": "Overall Mean"}
+
+for criterion in CRITERIA:
+    mean = raw_scores[criterion].mean()
+    sd = raw_scores[criterion].std(ddof=1)
+    overall_row[criterion] = f"{mean:.2f} ± {sd:.2f}"
+
+table = pd.concat(
+    [table, pd.DataFrame([overall_row])],
+    ignore_index=True
+)
+
+# ── Display ──
+table.columns = [
+    "Category",
+    "Relevance (5)",
+    "Specificity (5)",
+    "Coherence (5)",
+    "Overall (5)"
+]
+
+print(table.to_string(index=False))
+
+# ── Save ──
+table.to_csv("table_llm_recommendation_quality.csv", index=False)
