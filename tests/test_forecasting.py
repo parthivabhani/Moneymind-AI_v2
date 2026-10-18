@@ -1,5 +1,5 @@
 """
-Unit tests for forecasting models.
+Unit tests for forecasting models (OLS/RF).
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
