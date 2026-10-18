@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 def generate_recommendations(
     financial_summary: Dict,
     provider: str = "gemini",
-    model_name: str = "Gemini 3.8 Flash",
+    model_name: str = "gemini-1.5-flash",
     temperature: float = 0.3,
     max_tokens: int = 1024,
     top_p: float = 0.9,
@@ -45,7 +45,7 @@ def generate_recommendations(
 
     Args:
         financial_summary: Dictionary with financial metrics.
-        provider: "gemini" or "openai".
+        provider: "gemini".
         model_name: Model identifier.
         temperature: Sampling temperature.
         max_tokens: Maximum output tokens.
