@@ -1,3 +1,7 @@
+"""
+Computation 
+Author: Aishi De, Parthiv Abhani, SIT, Nagpur, 2026
+"""
 const isProduction = import.meta.env.PROD;
 const API_BASE_URL = isProduction 
   ? 'https://moneymind-ai-production.up.railway.app/api'
