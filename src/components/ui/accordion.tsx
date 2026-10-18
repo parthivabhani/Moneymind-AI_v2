@@ -1,3 +1,7 @@
+"""
+Computation 
+Author: Aishi De, Parthiv Abhani, SIT, Nagpur, 2026
+"""
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
