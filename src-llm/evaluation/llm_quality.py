@@ -1,5 +1,5 @@
 """
-Evaluation of LLM recommendation quality using expert ratings.
+Evaluation of LLM recommendation quality using expert ratings (Krippendorff's alpha for inter-rater reliability).
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
