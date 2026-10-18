@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Evaluate forecasting models on hold-out data and create performance plots.
+Evaluate forecasting models on data and create performance plots.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
