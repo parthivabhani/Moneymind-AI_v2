@@ -128,7 +128,7 @@ def main(args):
     }
 
     save_json(output, args.output)
-    logger.info("Pipeline completed successfully.")
+    logger.info("MoneyMind Pipeline completed successfully.")
 
 
 if __name__ == "__main__":
