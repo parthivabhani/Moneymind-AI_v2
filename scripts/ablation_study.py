@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Ablation study on FHS components.
+Ablation study on FHS component.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
