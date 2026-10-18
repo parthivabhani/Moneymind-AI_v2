@@ -31,8 +31,7 @@ def main(args):
         data = json.load(f)
 
     # Each entry: {"fhs": ..., "risk_class": ...} or components to compute FHS
-    # For evaluation, we need true labels and computed FHS.
-    # If data contains components, compute FHS.
+ 
     if "components" in data[0]:
         fhs_scores = []
         for entry in data:
