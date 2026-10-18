@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Train forecasting models using walk-forward cross-validation and save artifacts.
+Train forecasting models using walk-forward cross-validation and save models artifacts.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
