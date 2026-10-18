@@ -1,5 +1,5 @@
 """
-Ordinary Least Squares (OLS) Linear Regression forecaster.
+Ordinary Least Squares (OLS) linear regression model for time-series forecasting using time index as feature.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class OLSForecaster:
     """
-    OLS linear regression model for time-series forecasting using time index as feature.
+    
 
     Attributes:
         model: sklearn LinearRegression instance.
