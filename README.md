@@ -10,9 +10,9 @@ MoneyMind-FDSS integrates five tightly coupled modules:
 
 1. **Data Ingestion & Preprocessing** – handles missing values, outlier detection, monthly aggregation, and min‑max normalisation.
 2. **Financial Analytics Engine** – computes total income, total expenses, net cash flow (NCF), net profit margin (NPM), and expense category distributions.
-3. **Machine Learning Forecasting** – provides 30‑, 60‑, and 90‑day forecasts using Ordinary Least Squares (OLS) linear regression and Random Forest (RF) ensemble algorithms, validated via walk‑forward cross‑validation.
+3. **Machine Learning Forecasting** – provides 30‑, 60‑, and 90‑day (1/2, and 3 months) forecasts using Ordinary Least Squares (OLS) linear regression and Random Forest (RF) ensemble algorithms, validated via walk‑forward cross‑validation.
 4. **Composite Financial Health Scoring (FHS)** – combines NPM, cash flow stability (CFS), revenue growth (RG), and expense volatility (EV) into a three‑tier risk classification (Healthy, Moderate Risk, High Risk).
-5. **LLM‑Based Recommendation Engine** – transforms structured financial summaries into actionable, natural‑language advice using prompt engineering and state‑of‑the‑art language models (Gemini or GPT‑4o).
+5. **LLM‑Based Recommendation Engine** – transforms structured financial summaries into actionable, natural‑language advice using prompt engineering and state‑of‑the‑art language models (Gemini gemini-1.5-flash or GPT‑4o).
 
 The RF forecasting model benefits the ARIMA(1,1,1) baseline model, with a mean MAPE of 11.2% ± 1.5% (95% CI; MAE ≈ ₹50,400; RMSE ≈ ₹67,100) achieved over a 24-month observations hybrid transactional dataset of 480 transaction records across six expense categories using four-fold cross-validation (walk-forward). 
 The Diebold–Mariano test with HLN small-sample correction indicates that RF is significantly more accurate than the ARIMA(1,1,1) baseline at the 1% level (HLN-corrected DM = 3.94, p = 0.002, n = 12) and then LR at the 5% level (HLN-corrected DM = 2.24, p = 0.046). 
