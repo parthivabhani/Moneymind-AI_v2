@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Sensitivity analysis for FHS weight perturbation.
+Sensitivity analysis for FHS ±20% weight perturbation.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
