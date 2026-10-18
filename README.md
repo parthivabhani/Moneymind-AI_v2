@@ -14,11 +14,15 @@ MoneyMind-FDSS integrates five tightly coupled modules:
 4. **Composite Financial Health Scoring (FHS)** – combines NPM, cash flow stability (CFS), revenue growth (RG), and expense volatility (EV) into a three‑tier risk classification (Healthy, Moderate Risk, High Risk).
 5. **LLM‑Based Recommendation Engine** – transforms structured financial summaries into actionable, natural‑language advice using prompt engineering and state‑of‑the‑art language models (Gemini or GPT‑4o).
 
-The system achieves a forecasting MAPE of 11.2 ± 1.5 % (RF), a risk classification accuracy of 88.0 % with a Cohen’s κ of 0.82, and expert‑rated recommendation quality of 4.19 ± 0.31 out of 5.0.
+The RF forecasting model benefits the ARIMA(1,1,1) baseline model, with a mean MAPE of 11.2% ± 1.5% (95% CI; MAE ≈ ₹50,400; RMSE ≈ ₹67,100) achieved over a 24-month observations hybrid transactional dataset of 480 transaction records across six expense categories using four-fold cross-validation (walk-forward). 
+The Diebold–Mariano test with HLN small-sample correction indicates that RF is significantly more accurate than the ARIMA(1,1,1) baseline at the 1% level (HLN-corrected DM = 3.94, p = 0.002, n = 12) and then LR at the 5% level (HLN-corrected DM = 2.24, p = 0.046). 
+The FHS risk classifier achieves an overall accuracy of 84.0% and a macro-average F1-Score of 83.9% and a Cohen's κ of 0.76, showing substantial inter-class agreement. 
+The recommendations of LLM (50 outputs per category from 5 domain experts) result in a mean quality score of 4.19±0.31/5.0 (Krippendorff’s α = 0.79). 
+On a full four-module functional coverage, which it is alone among the four benchmark methods, MoneyMind AI cuts the time required to complete financial analysis tasks by 97.9%-99.0% relative to manual financial analysis methods across a small battery of standard tasks. 
 
 ## LLM API Key Setup
 
-The recommendation engine supports both Google Gemini and OpenAI GPT‑4o. To use either, obtain an API key and set it as an environment variable.
+The recommendation engine supports both Google Gemini gemini-1.5-flash and OpenAI GPT‑4o. To use either, obtain an API key and set it as an environment variable.
 
     Google Gemini:
     Visit Google AI Studio to generate an API key.
