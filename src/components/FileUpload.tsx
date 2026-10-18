@@ -1,3 +1,8 @@
+
+"""
+Computation 
+Author: Aishi De, Parthiv Abhani, SIT, Nagpur, 2026
+"""
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, FileText, X, CheckCircle, AlertCircle } from 'lucide-react';
