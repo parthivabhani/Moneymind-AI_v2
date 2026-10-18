@@ -39,12 +39,7 @@ def main(args):
     # Here we compute overall alpha across all ratings.
     all_scores_by_rater = []  # list of lists per rater across all items
     # Assume each dimension's list of scores corresponds to raters (same order)
-    # We'll need to organize: for each rater, collect scores for all categories and dimensions.
-    # This is a simplification; in practice, the data structure may vary.
-    # For demonstration, we just compute alpha on a dummy matrix.
-    # Instead, we'll compute alpha on the combined data.
-    # We'll assume ratings_data contains list of scores per item per rater.
-    # Better: We'll require a separate file with format: list of raters' scores per item.
+    
     if args.raters_data:
         with open(args.raters_data, 'r') as f:
             rater_data = json.load(f)  # list of lists: rater x item
