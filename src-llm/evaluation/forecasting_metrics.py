@@ -1,5 +1,5 @@
 """
-Forecasting evaluation metrics and statistical tests.
+Forecasting evaluation metrics and statistical tests with Diebold-Mariano test.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
