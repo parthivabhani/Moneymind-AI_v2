@@ -1,5 +1,5 @@
 """
-Unit tests for risk module.
+Unit tests for classify risk module.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
