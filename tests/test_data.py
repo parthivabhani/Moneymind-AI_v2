@@ -1,5 +1,5 @@
 """
-Unit tests for data ingestion and preprocessing.
+Unit tests for data ingestion and data preprocessing.
 Author: Amit Pimpalkar, RBU, Nagpur, 2026
 """
 
@@ -27,7 +27,7 @@ def test_impute_missing():
     })
     df_imp = impute_missing(df, missing_threshold=0.05)
     assert df_imp["income"].isna().sum() == 1  # missing > 5% -> median imputed
-    assert df_imp["income"].iloc[1] == 100  # median of [100,200] = 150? Actually median = 150, but with threshold 0.05, missing=33% => median
+    assert df_imp["income"].iloc[1] == 100  # median of [100,200] = 150, with threshold 0.05, missing=33% => median
     # Test with threshold > missing frac: set to 0
     df_imp2 = impute_missing(df, missing_threshold=0.5)
     assert df_imp2["income"].iloc[1] == 0
