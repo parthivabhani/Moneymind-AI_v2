@@ -12,11 +12,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 def generate_transactions(months=24, seed=42):
-    np.random.seed(seed)
+    np.seed(seed)
     start_date = datetime(2023, 1, 1)
     dates = [start_date + timedelta(days=i) for i in range(months*30)]  # approx daily
     
-    # Parameters from Table 5
+    # Parameters 
     mean_income = 450000
     seasonal_amplitude = 0.08  # ±8% seasonal
     growth_rate = 0.018  # 1.8% monthly compound
@@ -39,16 +39,16 @@ def generate_transactions(months=24, seed=42):
         trend = (1 + growth_rate) ** month_idx
         
         # income with noise
-        income = mean_income * trend * seasonal * (1 + np.random.normal(0, 0.05))
+        income = mean_income * trend * seasonal * (1 + np.normal(0, 0.05))
         income = max(0, income)
         
         # expenses: sum of categories with noise
-        base_expense = income * np.random.uniform(0.6, 0.85)
-        expense = base_expense * (1 + np.random.normal(0, 0.07))
+        base_expense = income * np.uniform(0.6, 0.85)
+        expense = base_expense * (1 + np.normal(0, 0.07))
         expense = max(0, expense)
         
         # allocate to categories
-        cat_expenses = np.random.multinomial(round(expense), expense_weights)
+        cat_expenses = np.multinomial(round(expense), expense_weights)
         for cat, amt in zip(categories, cat_expenses):
             records.append({
                 "date": date.strftime("%Y-%m-%d"),
@@ -63,7 +63,7 @@ def generate_transactions(months=24, seed=42):
     # We'll do a simple approach: for each month, add one income record equal to total monthly income, and distribute expenses.
     # We should have daily expenses and occasional income.
     # The above is a simplification; we'll adjust to match the monthly aggregates.
-    # Instead, we directly use monthly aggregates and then expand to daily with random distribution.
+    # Instead, we directly use monthly aggregates and then expand to daily with  distribution.
     # Let's do that more precisely.
     
     # Better: generate monthly totals then distribute to daily.
@@ -78,10 +78,10 @@ def generate_transactions(months=24, seed=42):
         elif month_date.month in [4,5,6]:
             seasonal -= 0.08
         trend = (1 + growth_rate) ** m
-        inc = mean_income * trend * seasonal * (1 + np.random.normal(0, 0.04))
+        inc = mean_income * trend * seasonal * (1 + np.normal(0, 0.04))
         inc = max(0, inc)
         # expenses: roughly 70-80% of income
-        exp = inc * np.random.uniform(0.70, 0.85) * (1 + np.random.normal(0, 0.05))
+        exp = inc * np.uniform(0.70, 0.85) * (1 + np.normal(0, 0.05))
         exp = max(0, exp)
         monthly_income.append(inc)
         monthly_expense.append(exp)
@@ -101,14 +101,14 @@ def generate_transactions(months=24, seed=42):
                 share = 0.5 if len(income_days) > 1 else 1.0
                 all_records.append({"date": date.strftime("%Y-%m-%d"), "income": inc * share, "expense": 0, "category": ""})
         # Distribute expenses daily across categories
-        cat_amounts = np.random.multinomial(round(exp), expense_weights, size=days_in_month).sum(axis=0)
+        cat_amounts = np.multinomial(round(exp), expense_weights, size=days_in_month).sum(axis=0)
         for cat, total_cat in zip(categories, cat_amounts):
             # distribute evenly across days
             daily_amt = total_cat / days_in_month
             for day_idx in range(days_in_month):
                 date = month_start + timedelta(days=day_idx)
                 # add small variation
-                amt = daily_amt * (1 + np.random.normal(0, 0.1))
+                amt = daily_amt * (1 + np.normal(0, 0.1))
                 amt = max(0, amt)
                 all_records.append({
                     "date": date.strftime("%Y-%m-%d"),
@@ -130,28 +130,27 @@ def generate_transactions(months=24, seed=42):
     print(f"Generated {len(df)} records, saved to {output_path}")
 
 def generate_risk_profiles(n=150, seed=42):
-    np.random.seed(seed)
     profiles = []
     for i in range(n):
         # Generate components with correlations to produce three classes
         # We'll create distributions for each class
         if i < 50:  # Healthy
-            pm = np.random.uniform(15, 40)
-            cfs = np.random.uniform(0.7, 1.0)
-            rg = np.random.uniform(0.5, 1.0)
-            ev = np.random.uniform(0.0, 0.3)
+            pm = np.uniform(15, 40)
+            cfs = np.uniform(0.7, 1.0)
+            rg = np.uniform(0.5, 1.0)
+            ev = np.uniform(0.0, 0.3)
             risk_class = "Healthy"
         elif i < 100:  # Moderate
-            pm = np.random.uniform(5, 20)
-            cfs = np.random.uniform(0.4, 0.75)
-            rg = np.random.uniform(0.2, 0.7)
-            ev = np.random.uniform(0.2, 0.6)
+            pm = np.uniform(5, 20)
+            cfs = np.uniform(0.4, 0.75)
+            rg = np.uniform(0.2, 0.7)
+            ev = np.uniform(0.2, 0.6)
             risk_class = "Moderate Risk"
         else:  # High
-            pm = np.random.uniform(-5, 8)
-            cfs = np.random.uniform(0.0, 0.45)
-            rg = np.random.uniform(0.0, 0.3)
-            ev = np.random.uniform(0.4, 1.0)
+            pm = np.uniform(-5, 8)
+            cfs = np.uniform(0.0, 0.45)
+            rg = np.uniform(0.0, 0.3)
+            ev = np.uniform(0.4, 1.0)
             risk_class = "High Risk"
         profiles.append({
             "components": {
