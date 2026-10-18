@@ -106,10 +106,10 @@ Whether you're an individual managing personal finances or an SME monitoring cas
 ```text
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ MODULE                    │ PURPOSE                                     │
-├──────────────────────────────────────────────────────────────────────────┤
-│ 📊 Analytics Engine       │ Income & Expense Analysis                   │
-│ 📈 Forecasting Engine     │ 30 / 60 / 90 Day Predictions                │
-│ 💸 Expense Intelligence   │ Automatic Expense Categorization            │
+├─────────────────────────────────────────────────────────────────────────┤
+│ 📊 Analytics Engine      │ Income & Expense Analysis                   │
+│ 📈 Forecasting Engine    │ 30/60/90 Day (1, 2 & 3 Month) Predictions   │
+│ 💸 Expense Intelligence  │ Automatic Expense Categorization            │
 │ ⚠ Risk Monitoring        │ Financial Risk Detection                    │
 │ 🚨 Anomaly Detection     │ Fraud & Outlier Detection                   │
 │ 🎯 Goal Tracking         │ Financial Goal Monitoring                   │
@@ -148,7 +148,7 @@ Whether you're an individual managing personal finances or an SME monitoring cas
 ║ • Linear Regression Models                              ║
 ║ • Moving Averages                                       ║
 ║ • Confidence Intervals                                  ║
-║ • 30 / 60 / 90 Day Forecasts                            ║
+║ • 30 / 60 / 90 Day Forecasts (1, 2 & 3 Month)            ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
