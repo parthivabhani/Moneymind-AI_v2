@@ -1,3 +1,7 @@
+"""
+Computation 
+Author: Aishi De, Parthiv Abhani, SIT, Nagpur, 2026
+"""
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
