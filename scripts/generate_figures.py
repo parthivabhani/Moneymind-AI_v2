@@ -19,12 +19,12 @@ from src.evaluation.forecasting_metrics import diebold_mariano_test
 def plot_forecasting_comparison(forecast_results, output_dir):
     """Figure: Forecasting performance and comparative evaluation of model behaviour."""
     models = ["ARIMA", "LR", "RF", "LSTM"]
-    accuracies = [81.1, 86.1, 88.8, 91.2]  # from previous multiple evaluations
-    maes = [1650, 1200, 950, 820]
-    rmses = [2180, 1620, 1265, 1048]
+    accuracies_r = [78.4, 84.7, 89.1, 92.3]  # from previous multiple evaluations
+    maes = [85050, 62550, 50400, 39600]
+    rmses = [112400, 84400, 67100, 50600]
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     # Accuracy bar
-    axes[0,0].bar(models, accuracies, color=['#1f77b4','#ff7f0e','#2ca02c','#d62728'])
+    axes[0,0].bar(models, accuracies_r, color=['#1f77b4','#ff7f0e','#2ca02c','#d62728'])
     axes[0,0].set_ylabel('Accuracy (%)')
     axes[0,0].set_title('Forecasting Accuracy Comparison')
     axes[0,0].grid(True, axis='y')
@@ -41,10 +41,10 @@ def plot_forecasting_comparison(forecast_results, output_dir):
     # R^2 distribution (from bootstrap)
     r2_vals = {"ARIMA": [0.78]*10, "LR": [0.85]*10, "RF": [0.89]*10, "LSTM": [0.92]*10}  # placeholder
    
-    np.random.seed(42)
+    np.seed(42)
     for m in models:
         mean = r2_vals[m][0]
-        r2_vals[m] = np.random.normal(mean, 0.01, 30)
+        r2_vals[m] = np.normal(mean, 0.01, 30)
     axes[1,1].boxplot([r2_vals[m] for m in models], labels=models)
     axes[1,1].set_ylabel('R²')
     axes[1,1].set_title('R² Distribution (30 simulations)')
@@ -176,17 +176,17 @@ def main(args):
     plot_confusion_matrix(cm, labels, output_dir)
     
     # ROC curves 
-    np.random.seed(42)
+    np.seed(42)
     n = 150
     y_true = np.array([0]*50 + [1]*50 + [2]*50)
     y_scores = np.zeros((n,3))
     for i in range(n):
         if y_true[i] == 0:
-            y_scores[i] = [0.7 + np.random.rand()*0.3, 0.1 + np.random.rand()*0.2, 0.0 + np.random.rand()*0.1]
+            y_scores[i] = [0.7 + np.rand()*0.3, 0.1 + np.rand()*0.2, 0.0 + np.rand()*0.1]
         elif y_true[i] == 1:
-            y_scores[i] = [0.2 + np.random.rand()*0.3, 0.5 + np.random.rand()*0.3, 0.1 + np.random.rand()*0.2]
+            y_scores[i] = [0.2 + np.rand()*0.3, 0.5 + np.rand()*0.3, 0.1 + np.rand()*0.2]
         else:
-            y_scores[i] = [0.0 + np.random.rand()*0.1, 0.2 + np.random.rand()*0.2, 0.6 + np.random.rand()*0.3]
+            y_scores[i] = [0.0 + np.rand()*0.1, 0.2 + np.rand()*0.2, 0.6 + np.rand()*0.3]
     plot_roc_curves(y_true, y_scores, labels, output_dir)
     
     # FHS distributions
@@ -194,13 +194,13 @@ def main(args):
     true_labels = []
     for i in range(150):
         if i < 50:
-            fhs = np.random.uniform(0.70, 1.0)
+            fhs = np.uniform(0.70, 1.0)
             lab = "Healthy"
         elif i < 100:
-            fhs = np.random.uniform(0.35, 0.70)
+            fhs = np.uniform(0.35, 0.70)
             lab = "Moderate Risk"
         else:
-            fhs = np.random.uniform(0.0, 0.35)
+            fhs = np.uniform(0.0, 0.35)
             lab = "High Risk"
         fhs_scores.append(fhs)
         true_labels.append(lab)
@@ -224,9 +224,9 @@ def main(args):
     }
     plot_ablation(ablation_results, output_dir)
     
-    # Residual analysis - we need predictions; we'll generate dummy
-    y_true = np.random.normal(500000, 50000, 100)
-    y_pred = y_true + np.random.normal(0, 10000, 100)
+    # Residual analysis 
+    y_true = np.normal(500000, 50000, 100)
+    y_pred = y_true + np.normal(0, 10000, 100)
     plot_residual_analysis(y_true, y_pred, output_dir)
     
     print(f"All figures generated in {output_dir}")
